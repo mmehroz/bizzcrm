@@ -1,0 +1,4 @@
+rawclient_companyname,rawclient_contactperson,rawclient_email,rawclient_alternateemail,rawclient_officenumber,rawclient_alternateofficenumber,rawclient_twitterid,rawclient_facebookid,rawclient_instagramid,rawclient_address,rawclient_state,rawclient_city,location_id,rawclient_timezone,rawclient_website,rawclient_companyindustry,rawclient_designation,rawclient_companydecription,rawclient_zipcode,rawclient_totalrevenue,rawclient_status,rawclient_comment,status_id,created_by,created_at
+Test7,abc7,test@7,test@,1,2,test,test,test,test,test,test,2,test,test,test,test,test,test,10,New,NULL,1,4,12/18/2020 1:54
+zxc8,popo8,8test@test.com,test@dfg.com,164654,254654,test,test,test,test,vdfd,testcdcd,2,test,test,test,test,test,test,10,New,NULL,1,4,12/18/2020 1:14
+Test9,mno9,9new@new.com,test@,1,2,test,test,test,test,test,test,2,test,test,test,test,test,test,10,New,NULL,1,4,12/18/2020 1:52

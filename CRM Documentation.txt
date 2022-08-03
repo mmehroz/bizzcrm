@@ -1,0 +1,82 @@
+- Campaign
+1.Banner - Chosefile Image Only
+2.Logo - Chosefile Image Only
+3.Website
+4.Campaign Name
+5.Email
+6.Select Currency - Dropdown
+7.Location
+8.Profession
+9.About Us
+
+
+- User Role(Manager,Agent,Designer,Digitizer,Admin,Accountant) ----------login status-------------
+1.Name
+2.Email
+3.Office Number(Ext)
+4.Phone Number
+5.Username
+6.Target
+7.Password
+8.Confirm Password
+9.Picture - Chosefile Image only
+
+
+- Client
+1.Company Name
+2.Contact Person
+3.Address
+4.Office Number
+5.Alt Office Number
+6.Twitter Id
+7.Facebook Id
+8.Instagram Id
+9.State
+10.City
+11.Country
+12.Time Zone
+13.Email
+14.Alternate Email
+15.Website
+16.Company/Industry
+17.Designation
+18.Company Description
+19.Zip code
+20.Total Revenue
+
+
+- Order
+1.Deadline  Date
+2.Design Name
+3.Amount Quoted
+4.Design Type
+5.Placement
+6.Attachment
+7.Manager Desciption
+8.Agent Description
+9.PO Number
+10.Required Format
+11.Level
+12.Fabric
+13.No.Of Colors
+14.Color Blending
+15.Background Fill
+16.Height
+17.Width
+18.No.Of Stitches
+19.Instructions
+20.Order Status 
+21.Manager Pick By
+22.Work Assign To
+23.Work Pick By
+24.Order Token (Deal)
+25.Order Attachment
+26.Accountant Pick By
+27.Status Id
+28.Client Id
+29.Created By
+30.Created At
+31.Updated By
+32.Updated At
+
+

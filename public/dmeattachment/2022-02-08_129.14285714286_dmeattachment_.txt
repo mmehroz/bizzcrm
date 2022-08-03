@@ -1,0 +1,684 @@
+# CRM
+## User Roles
+<dl>
+    <dt>Agent</dt>
+    <dd>The Agent is the basic user role in CRM whose responsibility is to track and allow the business deals to be
+        inserted. The Agent can add orders based on the clients assigned to him.</dd>
+    <dt>Manager</dt>
+    <dd>As a Manager, a user can perform all the task of an Agent Role. A Manager apart from performing the Agent
+        specified task can also perform management related task in which the Manager can manage the list of Agents
+        assigned to him.</dd>
+    <dt>Senior Manager</dt>
+    <dd>As a Senior Manager, a user can perform all the task of an Agent Role and Senior Role. A Senior Manager
+        apart from performing the Agent specified task and Manager Specified task, can also perform admin related
+        task in the campaign the role is assigned in. </dd>
+    <dt>Admin</dt>
+    <dd>As an Admin of the System, This role is the powerful feature of the CRM providing overview of  the whole operations, and managing campaigns of every Senior Manager</dd>
+    <dt>Designer</dt>
+    <dd>As a Designer, User can pick the pending design orders queued inside a list of Orders added by the Agent, Manager, Senior Manager and can Submit the workings on the orders which can be used by the Order poster to forward to the clients</dd>
+    <dt>Digitizer</dt>
+    <dd>As a Digitizer, User can pick the pending digitizing orders queued inside a list of Orders added by the Agent, Manager, Senior Manager and can Submit the workings on the orders which can be used by the Order poster to forward to the clients</dd>
+    <dt>Developer</dt>
+    <dd>As a Developer, User can pick the pending development orders queued inside a list of Orders added by the Agent, Manager, Senior Manager and can Submit the workings on the orders which can be used by the Order poster to forward to the clients</dd>
+    <dt>Doctor Chase</dt>
+    <dd>As a Doctor chase, User can submit the task related to chasing a doctor</dd>
+    <dt>Accountant</dt>
+    <dd>As an Accountant, User can manage the invoices and track the overall business cash flow</dd>
+</dl>
+
+---
+
+## Dashboard
+
+A Dashboard page provides an overview performance of an idividual on a campaign the user is assigned to. It provides the overall number of orders and the contributions it provides to the campaign.
+
+As an Senior Manager, Manager and Admin, A list of agents will be visible to track the Agents the top performances of Agents in a campaign
+
+---
+
+## Create Order
+
+Create Order page let's the user place an order of the campaign. It is subdivided into different sections to provide detailed data of the order placements. 
+
+<dl>
+    <dt>Patients Basic Info</dt>
+    <dd>This section covers the basic Information of the patients. Here, Home phone should be unique to every order.</dd>
+    <dt>Insurance Info</dt>
+    <dd>This section covers the Insurance related Informations.Here, The Patients medicare ID is required</dd>
+    <dt>Doctor's Information</dt>
+    <dd>This sections covers the doctor informations of the patient. </dd>
+    <dt>Diabetic/Heart diseases/Cancer Info</dt>
+    <dd>This section covers the diabetic related information of the patient.</dd>
+    <dt>Brace Request and Details</dt>
+    <dd>This section covers the pain related information of the patient which requires special attention and the remedies taking as a precaution</dd>
+    <dt>Other Info</dt>
+    <dd>This section covers the additional information that can be added when placing the order that can be used as a free space to save a note.</dd>
+    <dt>Upload Attachment</dt>
+    <dd>This section covers the attachments provided by the patient.</dd>
+</dl>
+
+---
+
+## Deal List {#dme-deals}
+
+This section provides the List of Orders created by the Agent, Manager, Senior Manager role users. This section is widely used to montior the progress by the User. The List is filtered to show only the Orders created by the user or assigned to the user. 
+
+**Allowed Users**: 
+
+- Agent
+  
+- Manager
+
+- Senior Manager
+
+- Admin
+
+**Features**:
+
+- As a User, you can search the data over a textfield at the top
+
+- As a User, you can filter the data within the specified month range
+
+- As a User, you can filter the data within the specified date range
+
+- As a User, you can view the data filtered as Active Orders and Saved Orders
+
+- As a User, you can click the data row to see the details in a Modal
+
+- As a User, you can open the details and can copy the patients data in formatted text
+
+**Key Data Info**:
+
+- **Sr No.**: Serial data number
+
+- **Refrence No.**: The Track number of Orders to track
+
+- **First Name**: The First name of the Patient
+
+- **Last Name**: The Last name or Surname of the Patient
+
+- **Client Contact**: The Contact information of the Patient
+
+- **Medicare ID**: Medicare Insurance Id of the Patient
+
+- **Client Email**: Email of the Patient
+
+- **Coverage Status**: Type of Insurance coverage the Patient is associated with
+
+- **Status**: Status Progress of the Order
+
+---
+
+## Managing Orders {#dme-managing-orders}
+
+This page allows managing the orders placed by the Agent Role based Users. Agent can forward to the managerial role who can pick from the forwarded section and by picking, gives consent to manage the process flow with the Agent until further processings. This allows Agent to work with manager to assign and complete on due time.
+
+### Forwarded Orders
+This section allows Managers to search through and pick the orders available to proceed. As a Managerial role User, you can decide to pick up the best suited orders for you.
+
+### Picked Orders
+This section allows Managerial role based users to see the orders that they have assigned themselves to further process. As a Managerial role User, you have the rights to modify the order if necessary to cope up with the business ethics and workflow.
+
+**Allowed Users**: 
+  
+- Manager
+
+- Senior Manager
+
+- Admin
+
+**Features**:
+
+- As a User, you can search the data over a textfield at the top
+
+- As a User, you can filter the data within the specified month range
+
+- As a User, you can filter the data within the specified date range
+
+- As a User, you can view the data filtered as Active Orders and Saved Orders
+
+- As a User, you can click the data row to see the details in a Modal
+
+- As a User, you can open the details and can copy the patients data in formatted text
+
+**Key Data Info**:
+
+- **Sr No.**: Serial data number
+
+- **Refrence No.**: The Track number of Orders to track
+
+- **First Name**: The First name of the Patient
+
+- **Last Name**: The Last name or Surname of the Patient
+
+- **Client Contact**: The Contact information of the Patient
+
+- **Client Email**: Email of the Patient
+ 
+- **Medicare ID**: Medicare Insurance Id of the Patient
+
+- **Created By**: Name of the Agent created the Order
+
+- **Status**: Status Progress of the Order
+
+---
+
+## Cancel Orders
+
+This page contains the list of orders that are cancelled during it's lifecycle process. This section can be used by the Managerial role based Users to view the orders details that were cancelled. 
+
+**Allowed Users**: 
+  
+- Manager
+
+- Admin
+
+**Features**:
+
+- As a User, you can search the data over a textfield at the top
+
+- As a User, you can filter the data within the specified month range
+
+- As a User, you can filter the data within the specified date range
+
+- As a User, you can view the data filtered as Agent cancelled Orders
+
+- As a User, you can click the data row to see the details in a Modal
+
+**Key Data Info**:
+
+- **Sr No.**: Serial data number
+
+- **Refrence No.**: The Track number of Orders to track
+
+- **First Name**: The First name of the Patient
+
+- **Last Name**: The Last name or Surname of the Patient
+
+- **Client Contact**: The Contact information of the Patient
+
+- **Medicare ID**: Medicare Insurance Id of the Patient
+
+- **Client Email**: Email of the Patient
+ 
+- **Created By**: Name of the Agent created the Order
+
+- **Coverage Status**: Type of Insurance coverage the Patient is associated with
+
+- **Status**: Status Progress of the Order
+
+---
+
+## Submitted Orders
+
+This page contains the Orders that are submitted by the respected designer, digitizer or developer, ready to be shipped to the client. Here, the Allowed Users can verify the order completed forward the orders to the next process.
+
+
+**Allowed Users**: 
+  
+- Manager
+
+- Admin
+
+- Senior Manager
+
+**Features**:
+
+- As a User, you can search the data over a textfield at the top
+
+- As a User, you can filter the data within the specified month range
+
+- As a User, you can filter the data within the specified date range
+
+- As a User, you can view the data filtered as Agent submitted Orders. These Order specify the consent and reviewed by Agent.
+
+- As a Senior Manager, you can view the data as Manager submitted Orders. These Order specify the consent and reviewed by Manager if they had created the Order.
+
+- As a User, you can click the data row to see the details in a Modal
+
+- As a User, you can filter the data by selecting the Coverage status to deal with your respective speciality.
+
+**Key Data Info**:
+
+- **Sr No.**: Serial data number
+
+- **Refrence No.**: The Track number of Orders to track
+
+- **First Name**: The First name of the Patient
+
+- **Last Name**: The Last name or Surname of the Patient
+
+- **Client Contact**: The Contact information of the Patient
+
+- **Medicare ID**: Medicare Insurance Id of the Patient
+
+- **Client Email**: Email of the Patient
+ 
+- **Created By**: Name of the Agent created the Order
+
+- **Coverage Status**: Type of Insurance coverage the Patient is associated with
+
+- **Status**: Status Progress of the Order
+
+---
+
+## Forwarded Billing Orders
+
+This page contains the data forwarded to Account based role. The Accountant can proceed with their respective working to generate Invoices and maintaining the cash flow of the orders.
+
+**Allowed Users**: 
+  
+- Accountant
+
+- Admin
+
+- Senior Manager
+
+**Features**:
+
+- As a User, you can search the data over a textfield at the top
+
+- As a User, you can filter the data within the specified month range
+
+- As a User, you can filter the data within the specified date range
+
+- As a User, you can view the data filtered as Agent Forwarded Orders. These Order specify the consent and reviewed by Agent.
+
+- As a Senior Manager, you can view the data as Manager Forwarded Orders. These Order specify the consent and reviewed by Manager if they had created the Order.
+
+- As a User, you can click the data row to see the details in a Modal
+
+- As a User, you can filter the data by selecting the Coverage status to deal with your respective speciality.
+
+**Key Data Info**:
+
+- **Sr No.**: Serial data number
+
+- **Refrence No.**: The Track number of Orders to track
+
+- **First Name**: The First name of the Patient
+
+- **Last Name**: The Last name or Surname of the Patient
+
+- **Client Contact**: The Contact information of the Patient
+
+- **Medicare ID**: Medicare Insurance Id of the Patient
+
+- **Client Email**: Email of the Patient
+ 
+- **Created By**: Name of the Agent created the Order
+
+- **Coverage Status**: Type of Insurance coverage the Patient is associated with
+
+- **Status**: Status Progress of the Order
+
+---
+
+## Campaign Detail
+
+This page provides the detailed overview of the campaign related details. The Allowed role based users can monitor the overall staff, add or modify the staff assigned to the campaign. 
+
+**Allowed Users**: 
+
+- Admin
+
+- Senior Manager
+
+**Features**:
+
+- As a User, you can add a new User in the campaign
+
+- As an Admin based User, you can edit or delete the Campaign
+
+- As a User, you can explore different sections of role based users added in the campaign. All the roles added in the campaign can be explored in this page.
+
+- As a User, you can explore the commission of a user, can also add and remove the commission of the user. To add the commission, A user need to specify the commission amount range and the percentage associated with that range. 
+
+---
+
+## Doctor NPI List
+
+This page contains the Doctors informations and their National Provider Identifier (NPI). This will allow the Doctor Chaser to inquire the business process assiciated with the involvement of Doctor to run without any obstacle. 
+
+**Allowed Users**: 
+  
+- Doctor Chase
+
+- Admin
+
+- Senior Manager
+
+**Features**:
+
+- As a User, you can search the data over a textfield at the top
+
+- As a User, you can view the data filtered as Agent Forwarded Orders. These Order specify the consent and reviewed by Agent.
+
+- As a User, you can click the data row to see the details in a Modal
+
+**Key Data Info**:
+
+- **Sr No.**: Serial data number
+
+- **Doctor Id**: The System generated Id of the Doctor
+
+- **Doctor Center**: 
+
+- **Doctor Name**: The Doctors name
+
+- **Doctor NPI**: The Contact information of the Patient
+
+- **Doctor Chase**: The Indicator of whether the Doctor is chased
+
+---
+
+## Doctor Chase Orders
+
+This page contains the data that are forwarded to the Doctor chase to further the processings with the doctor. The Doctor chase role based user can pick to create a personal pool to manage and take ownership to handle the further process.
+
+**Allowed Users**: 
+  
+- Doctor Chase
+
+**Features**:
+
+- As a User, you can search the data over a textfield at the top
+
+- As a User, you can filter the data within the specified date range
+
+- As a User, you can click the data row to see the details in a Modal
+
+- As a User, you can open the details and can copy the patients data in formatted text
+
+**Key Data Info**:
+
+- **Sr No.**: Serial data number
+
+- **Refrence No.**: The Track number of Orders to track
+
+- **Full Name**: The Full name of the Patient
+
+- **Client Contact**: The Contact information of the Patient
+
+- **Medicare ID**: Medicare Insurance Id of the Patient
+
+- **Coverage Status**: Type of Insurance coverage the Patient is associated with
+
+- **Created By**: Name of the Agent created the Order
+
+- **Status**: Status Progress of the Order
+
+---
+
+## Doctor Chased Orders
+
+This page contains the data that are chased and are ready to be forwarded for further the processings with the Patient. This indicate the ending process with the doctor and can be an indicator of processing ahead with any blocking process with the patient.
+
+**Allowed Users**: 
+  
+- Doctor Chase
+
+**Features**:
+
+- As a User, you can search the data over a textfield at the top
+
+- As a User, you can filter the data within the specified date range
+
+- As a User, you can click the data row to see the details in a Modal
+
+- As a User, you can open the details and can copy the patients data in formatted text
+
+**Key Data Info**:
+
+- **Sr No.**: Serial data number
+
+- **Refrence No.**: The Track number of Orders to track
+
+- **Full Name**: The Full name of the Patient
+
+- **Client Contact**: The Contact information of the Patient
+
+- **Medicare ID**: Medicare Insurance Id of the Patient
+
+- **Coverage Status**: Type of Insurance coverage the Patient is associated with
+
+- **Created By**: Name of the Agent created the Order
+
+- **Status**: Status Progress of the Order
+
+---
+
+## Processed List
+
+This page contains the data that has been successfully processed by the Accountant role based user.
+
+**Allowed Users**: 
+  
+- Accountant
+
+- Admin
+
+- Manager
+
+**Features**:
+
+- As a User, you can search the data over a textfield at the top
+
+- As a User, you can filter the data within the specified date range
+
+- As a User, you can click the data row to see the details in a Modal
+
+- As a User, you can open the details and can copy the patients data in formatted text
+
+- As a User, you can filter the data by selecting the Coverage status to deal with your respective speciality.
+
+**Key Data Info**:
+
+- **Sr No.**: Serial data number
+
+- **Refrence No.**: The Track number of Orders to track
+
+- **Full Name**: The Full name of the Patient
+
+- **Client Contact**: The Contact information of the Patient
+
+- **Medicare ID**: Medicare Insurance Id of the Patient
+
+- **Coverage Status**: Type of Insurance coverage the Patient is associated with
+
+- **Created By**: Name of the Agent created the Order
+
+- **Status**: Status Progress of the Order
+
+---
+## Returned List
+
+This page contains the data that has been returned during the processing.
+
+**Allowed Users**: 
+  
+- Accountant
+
+- Admin
+
+- Manager
+
+**Features**:
+
+- As a User, you can search the data over a textfield at the top
+
+- As a User, you can filter the data within the specified date range
+
+- As a User, you can click the data row to see the details in a Modal
+
+- As a User, you can open the details and can copy the patients data in formatted text
+
+- As a User, you can filter the data by selecting the Coverage status to deal with your respective speciality.
+
+**Key Data Info**:
+
+- **Sr No.**: Serial data number
+
+- **Refrence No.**: The Track number of Orders to track
+
+- **Full Name**: The Full name of the Patient
+
+- **Client Contact**: The Contact information of the Patient
+
+- **Medicare ID**: Medicare Insurance Id of the Patient
+
+- **Coverage Status**: Type of Insurance coverage the Patient is associated with
+
+- **Created By**: Name of the Agent created the Order
+
+- **Status**: Status Progress of the Order
+
+---
+
+## Approved Order List
+
+This page contains the Orders that are approved by the billing, ready to be shipped to the client. Here, the Allowed Users can verify the order completed forward the orders to the next process.
+
+
+**Allowed Users**: 
+  
+- Manager
+
+- Admin
+
+- Senior Manager
+
+**Features**:
+
+- As a User, you can search the data over a textfield at the top
+
+- As a User, you can filter the data within the specified month range
+
+- As a User, you can filter the data within the specified date range
+
+- As a User, you can view the data filtered as Agent submitted Orders. These Order specify the consent and reviewed by Agent.
+
+- As a Senior Manager, you can view the data as Manager submitted Orders. These Order specify the consent and reviewed by Manager if they had created the Order.
+
+- As a User, you can click the data row to see the details in a Modal
+
+- As a User, you can filter the data by selecting the Coverage status to deal with your respective speciality.
+
+**Key Data Info**:
+
+- **Sr No.**: Serial data number
+
+- **Refrence No.**: The Track number of Orders to track
+
+- **First Name**: The First name of the Patient
+
+- **Last Name**: The Last name or Surname of the Patient
+
+- **Client Contact**: The Contact information of the Patient
+
+- **Medicare ID**: Medicare Insurance Id of the Patient
+
+- **Client Email**: Email of the Patient
+ 
+- **Created By**: Name of the Agent created the Order
+
+- **Coverage Status**: Type of Insurance coverage the Patient is associated with
+
+- **Status**: Status Progress of the Order
+
+---
+
+## Billing Order List
+
+This page allows managing the orders forwarded to Accountant Role based Users. Accountant based users can pick from the forwarded section and by picking, gives consent to bill out the process flow with the Agent for further processings. This allows Accountant to work with team to complete the order transactions.
+
+### Forwarded Orders
+This section allows Accountant to search through and pick the orders available to proceed. As an Accountant role based User, you can decide to pick up the best suited orders for you.
+
+### Picked Orders
+This section allows Accountant role based users to see the orders that they have assigned to themselves to complete the order by processing the transactional process. As an Accountant role User, you have the rights to modify the order or cancel if necessary to cope up with the business ethics and workflow.
+
+
+**Allowed Users**: 
+  
+- Accountant
+
+- Admin
+
+**Features**:
+
+- As a User, you can search the data over a textfield at the top
+
+- As a User, you can filter the data within the specified month range
+
+- As a User, you can filter the data within the specified date range
+
+- As a User, you can click the data row to see the details in a Modal
+
+**Key Data Info**:
+
+- **Sr No.**: Serial data number
+
+- **Refrence No.**: The Track number of Orders to track
+
+- **Full Name**: The Full name of the Patient
+
+- **Client Contact**: The Contact information of the Patient
+
+- **Medicare ID**: Medicare Insurance Id of the Patient
+
+- **Coverage Status**: Type of Insurance coverage the Patient is associated with
+
+- **Created By**: Name of the Agent created the Order
+
+- **Status**: Status Progress of the Order
+
+---
+
+## Filled List
+
+This page allows managing the filled orders.
+
+### Forwarded Orders
+This section allows Accountant to search through and pick the orders available to proceed. As an Accountant role based User, you can decide to pick up the best suited orders for you.
+
+### Picked Orders
+This section allows Accountant role based users to see the orders that they have assigned to themselves to complete the order by processing the transactional process. As an Accountant role User, you have the rights to modify the order or cancel if necessary to cope up with the business ethics and workflow.
+
+
+**Allowed Users**: 
+  
+- Accountant
+
+- Admin
+
+**Features**:
+
+- As a User, you can search the data over a textfield at the top
+
+- As a User, you can filter the data within the specified month range
+
+- As a User, you can filter the data within the specified date range
+
+- As a User, you can click the data row to see the details in a Modal
+
+**Key Data Info**:
+
+- **Sr No.**: Serial data number
+
+- **Refrence No.**: The Track number of Orders to track
+
+- **Full Name**: The Full name of the Patient
+
+- **Client Contact**: The Contact information of the Patient
+
+- **Medicare ID**: Medicare Insurance Id of the Patient
+
+- **Coverage Status**: Type of Insurance coverage the Patient is associated with
+
+- **Created By**: Name of the Agent created the Order
+
+- **Status**: Status Progress of the Order
+
+---
+
