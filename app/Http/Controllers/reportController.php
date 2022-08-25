@@ -110,7 +110,7 @@ class reportController extends Controller
 		->select('order_amountquoted')
 		->where('status_id','=',1)
 		->where('campaign_id','=',$request->campaign_id)
-		->whereIn('orderstatus_id',[4,5,6,7,8,9,10,11,17])
+		->whereIn('orderstatus_id',[4,5,6,7,8,9,10,11,17,18])
 		->whereBetween('order_date', [$from, $to])
 		->sum('order_amountquoted');
 		$getcompletetargetcancel = DB::table('order')
@@ -222,7 +222,7 @@ class reportController extends Controller
 			->select('order_amountquoted')
 			->where('status_id','=',1)
 			->where('created_by','=',$getuserlist->user_id)
-			->whereIn('orderstatus_id',[4,5,6,7,8,9,10,11,17])
+			->whereIn('orderstatus_id',[4,5,6,7,8,9,10,11,17,18])
 			->whereBetween('order_date', [$from, $to])
 			->where('campaign_id','=',$request->campaign_id)
 			->sum('order_amountquoted');

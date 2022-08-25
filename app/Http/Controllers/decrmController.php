@@ -368,7 +368,18 @@ class decrmController extends Controller
 			->groupBy('declient_id')
 			->orderBy('declient_id','DESC')
 			->get();
-		}else{
+		}else if ($request->deorderstatus_id == 4) {
+				$deforwardeddeallist = DB::table('deforwardeddeallist')
+				->select('*')
+				->where('declient_id','>',24061)
+				->whereBetween('declient_date', [$request->from, $request->to])
+				->where('campaign_id','=',$request->campaign_id)
+				->whereIn('deorderstatus_id',[4,5,6,7,8,10,15])
+				->where('status_id','=',1)
+				->groupBy('declient_id')
+				->orderBy('declient_id','DESC')
+				->get();
+			}else{
 			$deforwardeddeallist = DB::table('deforwardeddeallist')
 			->select('*')
 			->where('declient_id','>',24061)

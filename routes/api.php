@@ -186,6 +186,7 @@ Route::any('/cpaadmindashboard', [dashboardController::class, 'cpaadmindashboard
 Route::any('/leadashboard', [dashboardController::class, 'leadashboard']);
 
 Route::any('/maxachieve', [dashboardController::class, 'maxachieve']);
+Route::any('/displayteamreport', [dashboardController::class, 'displayteamreport']);
 
 Route::any('/addtarget', [targetController::class, 'addtarget']);
 Route::any('/updatetarget', [targetController::class, 'updatetarget']);

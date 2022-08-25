@@ -1798,7 +1798,7 @@ class orderController extends Controller
 			$getdeal = DB::table('mergedeal')
 			->select('order_token')
 			->where('mergedeal_token','=',$request->mergedeal_token)
-			->where('created_by','=',$request->user_id)
+			// ->where('created_by','=',$request->user_id)
 			->where('status_id','=',1)
 			->get();
 			$getdealtoken = array();

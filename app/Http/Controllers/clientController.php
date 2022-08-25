@@ -174,7 +174,7 @@ class clientController extends Controller
 			}
 		$getpreviousmonth = date('Y-m-d', strtotime('-2 months'));
 		$getclientlist;
-		if ($request->role_id == 1 || $request->role_id == 2 || $request->role_id == 9) {
+		if ($request->role_id == 1 || $request->role_id == 2 || $request->role_id == 9 || $request->user_id == 131) {
 			$getclientlist = DB::table('getclientlist')
 			->select('*')
 			->where('campaign_id','=',$request->campaign_id)
@@ -253,12 +253,14 @@ class clientController extends Controller
 		}
 		$getclientprofile = DB::table('getclientdetails')
 		->select('*')
+		->where('campaign_id','=',$request->campaign_id)
 		->where('client_id','=',$request->client_id)
 		->where('status_id','=',1)
 		->first();
 
 		$getclientunpaid = DB::table('order')
 		->select('order_amountquoted')
+		->where('campaign_id','=',$request->campaign_id)
 		->where('client_id','=',$request->client_id)
 		->whereNotIn('orderstatus_id',[11,12,18])
 		->where('status_id','=',1)
@@ -266,11 +268,22 @@ class clientController extends Controller
 
 		$getclientdeals = DB::table('getorderdetails')
 		->select('*')
+		->where('campaign_id','=',$request->campaign_id)
 		->where('client_id','=',$request->client_id)
 		->where('status_id','=',1)
 		->orderBy('order_id','DESC')
 		->limit(50)
 		->get();
+
+		$getcreatorid = DB::table('order')
+		->select('created_by')
+		->where('client_id','=',$request->client_id)
+		->first();
+		if (isset($getcreatorid)) {
+		if ($getcreatorid->created_by != $request->user_id && $request->user_id == 131) {
+			$emptyaray = array();
+			return response()->json(['profile' => $getclientprofile,'deals' => $emptyaray, 'unpaidamount' => $getclientunpaid, 'message' => 'Client Complete Profile'],200);
+		}}
 		if($getclientprofile){
 			return response()->json(['profile' => $getclientprofile,'deals' => $getclientdeals, 'unpaidamount' => $getclientunpaid, 'message' => 'Client Complete Profile'],200);
 		}else{

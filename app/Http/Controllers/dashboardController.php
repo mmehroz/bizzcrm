@@ -88,7 +88,7 @@ class dashboardController extends Controller
 			->select('order_amountquoted')
 			->where('status_id','=',1)
 			->where('created_by','=',$request->id)
-			->whereIn('orderstatus_id',[4,5,6,7,8,9,10,11,12,17])
+			->whereIn('orderstatus_id',[4,5,6,7,8,9,10,11,12,17,18])
 			->whereBetween('order_date', [$from, $to])
 			->where('campaign_id','=',$request->campaign_id)
 			->sum('order.order_amountquoted');	
@@ -116,7 +116,7 @@ class dashboardController extends Controller
 			->whereBetween('order_date', [$from, $to])
 			->where('campaign_id','=',$request->campaign_id)
 			->sum('order_amountquoted');	
-			$getunpaidamount = $gettargetachieved-$gettargetpaid-$gettargetcancel;
+			$getunpaidamount = $gettargetachieved-$gettargetpaid-$gettargetcancel-$getrecoverypaid;
 			$getuser->achieved = $gettargetachieved;
 			$getuser->paid = $gettargetpaid;
 			$getuser->recovery = $getrecoverypaid;
@@ -442,14 +442,14 @@ class dashboardController extends Controller
 			->select('order_amountquoted')
 			->where('status_id','=',1)
 			->where('campaign_id','=',$request->campaign_id)
-			->whereIn('orderstatus_id',[4,5,6,7,8,9,10,11,17])
+			->whereIn('orderstatus_id',[4,5,6,7,8,9,10,11,17,18])
 			->whereBetween('order_date', [$from, $to])
 			->sum('order_amountquoted');
 			$getpaidamount = DB::table('order')
 			->select('order_amountquoted')
 			->where('status_id','=',1)
 			->where('campaign_id','=',$request->campaign_id)
-			->whereIn('orderstatus_id',[11,18])
+			->where('orderstatus_id','=',11)
 			->whereBetween('order_date', [$from, $to])
 			->sum('order.order_amountquoted');
 			$getcancelamount = DB::table('order')
@@ -464,7 +464,7 @@ class dashboardController extends Controller
 			->select('order_amountquoted')
 			->where('status_id','=',1)
 			->where('campaign_id','=',$request->campaign_id)
-			->whereIn('orderstatus_id',[7,8,9,10,12,17])
+			->whereIn('orderstatus_id',[7,8,9,10,17])
 			->where('order_date','<', $from)
 			->sum('order_amountquoted');
 			$getpreviouscancelamount = DB::table('order')
@@ -474,7 +474,7 @@ class dashboardController extends Controller
 			->where('orderstatus_id','=',12)
 			->where('order_date','<', $from)
 			->sum('order_amountquoted');
-			$getpreviousunpaid = $getpreviousunpaidamount-$getpreviouscancelamount;
+			$getpreviousunpaid = $getpreviousunpaidamount;
 			$gettotalunpaidamount = $getunpaidamount+$getpreviousunpaid;
 			$getpreviousrecovery = DB::table('order')
 			->select('order_amountquoted')
@@ -552,7 +552,7 @@ class dashboardController extends Controller
 			$getmonthlycompleteorders = DB::table('order')
 			->select('order_id')
 			->where('status_id','=',1)
-			->whereIn('orderstatus_id',[4,5,6,7,8,9,10,11,17])
+			->whereIn('orderstatus_id',[4,5,6,7,8,9,10,11,17,18])
 			->where('campaign_id','=',$request->campaign_id)
 			->whereBetween('order_date', [$from, $to])
 			->count('order_id');
@@ -4470,6 +4470,41 @@ class dashboardController extends Controller
 		->sum('order_amountquoted');
 		if(isset($getgrosssale)){
 		return response()->json($getgrosssale,200);
+		}else{
+			return response()->json("Oops! Something Went Wrong", 400);
+		}
+	}
+	public function displayteamreport(Request $request){
+		$from = $request->from;
+		$to = $request->to;
+		$getuserdetails = array();
+		$getuserlist = DB::table('user')
+		->select('user_id','role_id','user_name','user_target','user_picture')
+		->whereIn('role_id',[3,4])
+		->where('status_id','=',1)
+		->whereIn('campaign_id',[1,9])
+		->get();
+		$index=0;
+		foreach ($getuserlist as $getuserlist) {
+			$achieved = DB::table('order')
+			->select('order_amountquoted')
+			->where('status_id','=',1)
+			->where('created_by','=',$getuserlist->user_id)
+			->whereIn('orderstatus_id',[4,5,6,7,8,9,10,11,17,18])
+			->whereBetween('order_date', [$from, $to])
+			// ->where('campaign_id','=',$request->campaign_id)
+			->sum('order_amountquoted');
+			$remaining = $getuserlist->user_target-$achieved; 
+			$getuserdetails[$index]['userid'] = $getuserlist->user_id;
+			$getuserdetails[$index]['name'] = $getuserlist->user_name;
+			$getuserdetails[$index]['picture'] = "/bizzcrm/public/userpicture/".$getuserlist->user_picture;
+			$getuserdetails[$index]['target'] = $getuserlist->user_target;
+			$getuserdetails[$index]['achieved'] = $achieved;
+			$getuserdetails[$index]['remaining'] = $remaining;
+			$index++;
+		}
+		if(isset($getuserlist)){
+			return response()->json([$getuserdetails],200);
 		}else{
 			return response()->json("Oops! Something Went Wrong", 400);
 		}
