@@ -69,6 +69,7 @@ class dashboardController extends Controller
 		->where('user_id','=',$request->id)
 		->where('status_id','=',1)
 		->first();
+		$targetdate = $year.'-'.$month;
 		$getmonth = $request->usertarget_month;
 		// $alldata = array();
 		function countDays($year, $month, $ignore) {
@@ -115,8 +116,16 @@ class dashboardController extends Controller
 			->where('orderstatus_id','=',12)
 			->whereBetween('order_date', [$from, $to])
 			->where('campaign_id','=',$request->campaign_id)
-			->sum('order_amountquoted');	
+			->sum('order_amountquoted');
+			$targetincrement = DB::table('usertarget')
+			->select('usertarget_target')
+			->where('user_id','=',$request->id)
+			->where('usertarget_month','<=',$targetdate)
+			->where('status_id','=',1)
+			->sum('usertarget_target');
+			$usertarget = $getuser->user_target+$targetincrement;
 			$getunpaidamount = $gettargetachieved-$gettargetpaid-$gettargetcancel-$getrecoverypaid;
+			$getuser->user_target = $usertarget;
 			$getuser->achieved = $gettargetachieved;
 			$getuser->paid = $gettargetpaid;
 			$getuser->recovery = $getrecoverypaid;
@@ -414,6 +423,7 @@ class dashboardController extends Controller
 		$getfromyearandmonth = explode('-', $from);
 		$year = $getfromyearandmonth[0];
 		$month = $getfromyearandmonth[1];
+		$targetdate = $year.'-'.$month;
 		$getuser = DB::table('getuserdetails')
 		->select('*')
 		->where('user_id','=',$request->user_id)
@@ -421,12 +431,18 @@ class dashboardController extends Controller
 		->first();
 		$getmonth = $request->usertarget_month;
 		$getpreviousmonth = date("Y-m", strtotime("-1 months"));
-		$getcampaigntarget = DB::table('user')
+		$basictarget = DB::table('user')
 		->select('user_target')
 		->where('campaign_id','=',$request->campaign_id)
 		->whereIn('role_id',[3,4])
 		->where('status_id','=',1)
 		->sum('user_target');
+		$targetincrement = DB::table('usertarget')
+		->select('usertarget_target')
+		->where('usertarget_month','<=',$targetdate)
+		->where('status_id','=',1)
+		->sum('usertarget_target');
+		$getcampaigntarget = $basictarget+$targetincrement;
 		function countDays($year, $month, $ignore) {
 		    $count = 0;
 		    $counter = mktime(0, 0, 0, $month, 1, $year);
@@ -3321,7 +3337,7 @@ class dashboardController extends Controller
 			->select('weborder_amount')
 			->where('status_id','=',1)
 			->where('created_by','=',$request->id)
-			->whereIn('orderstatus_id',[7,8,9,10,11,17])
+			->whereIn('orderstatus_id',[4,5,7,8,9,10,11,17])
 			->whereBetween('weborder_date', [$from, $to])
 			->sum('weborder_amount');	
 			$gettargetpaidmasterweb = DB::table('weborder')
@@ -3381,7 +3397,7 @@ class dashboardController extends Controller
 			->select('logoorder_amount')
 			->where('status_id','=',1)
 			->where('created_by','=',$request->id)
-			->whereIn('orderstatus_id',[7,8,9,10,11,17])
+			->whereIn('orderstatus_id',[4,5,7,8,9,10,11,17])
 			->whereBetween('logoorder_date', [$from, $to])
 			->sum('logoorder_amount');	
 			$gettargetpaidlogo = DB::table('logoorder')
@@ -4461,13 +4477,25 @@ class dashboardController extends Controller
 	public function maxachieve(Request $request){
 		$from = $request->from;
 		$to = $request->to;
-		$getgrosssale = DB::table('order')
+		$max = DB::table('order')
 		->select('order_amountquoted')
 		->where('status_id','=',1)
-		->where('campaign_id','=',$request->campaign_id)
 		->whereIn('orderstatus_id',[4,5,6,7,8,9,10,11,17])
 		->whereBetween('order_date', [$from, $to])
 		->sum('order_amountquoted');
+		$web = DB::table('weborder')
+		->select('weborder_amount')
+		->where('status_id','=',1)
+		->whereIn('orderstatus_id',[4,5,7,8,9,10,11,17,18])
+		->whereBetween('weborder_date', [$from, $to])
+		->sum('weborder_amount');	
+		$logo = DB::table('logoorder')
+		->select('logoorder_amount')
+		->where('status_id','=',1)
+		->whereIn('orderstatus_id',[4,5,7,8,9,10,11,17,18])
+		->whereBetween('logoorder_date', [$from, $to])
+		->sum('logoorder_amount');
+		$getgrosssale = $max+$web+$logo;
 		if(isset($getgrosssale)){
 		return response()->json($getgrosssale,200);
 		}else{
@@ -4486,19 +4514,53 @@ class dashboardController extends Controller
 		->get();
 		$index=0;
 		foreach ($getuserlist as $getuserlist) {
-			$achieved = DB::table('order')
+			if ($getuserlist->user_id == 3) {
+				$globaluser_id = 169;
+			}elseif ($getuserlist->user_id == 4){
+				$globaluser_id = 170;
+			}elseif ($getuserlist->user_id == 9) {
+				$globaluser_id = 172;
+			}elseif ($getuserlist->user_id == 12) {
+				$globaluser_id = 184;
+			}elseif ($getuserlist->user_id == 131) {
+				$globaluser_id = 171;
+			}else{
+				$globaluser_id = 0;
+			}
+			$targetincrement = DB::table('usertarget')
+			->select('usertarget_target')
+			->whereIn('user_id',[$getuserlist->user_id, $globaluser_id])
+			->where('usertarget_month','<=',date('Y-m'))
+			->where('status_id','=',1)
+			->sum('usertarget_target');
+			$usertarget = $getuserlist->user_target+$targetincrement;
+			$max = DB::table('order')
 			->select('order_amountquoted')
 			->where('status_id','=',1)
-			->where('created_by','=',$getuserlist->user_id)
-			->whereIn('orderstatus_id',[4,5,6,7,8,9,10,11,17,18])
+			->whereIn('created_by',[$getuserlist->user_id, $globaluser_id])
+			->whereIn('orderstatus_id',[4,5,7,8,9,10,11,17,18])
 			->whereBetween('order_date', [$from, $to])
-			// ->where('campaign_id','=',$request->campaign_id)
 			->sum('order_amountquoted');
-			$remaining = $getuserlist->user_target-$achieved; 
+			$web = DB::table('weborder')
+			->select('weborder_amount')
+			->where('status_id','=',1)
+			->whereIn('created_by',[$getuserlist->user_id, $globaluser_id])
+			->whereIn('orderstatus_id',[4,5,7,8,9,10,11,17,18])
+			->whereBetween('weborder_date', [$from, $to])
+			->sum('weborder_amount');	
+			$logo = DB::table('logoorder')
+			->select('logoorder_amount')
+			->where('status_id','=',1)
+			->whereIn('created_by',[$getuserlist->user_id, $globaluser_id])
+			->whereIn('orderstatus_id',[4,5,7,8,9,10,11,17,18])
+			->whereBetween('logoorder_date', [$from, $to])
+			->sum('logoorder_amount');	
+			$achieved = $max+$web+$logo;
+			$remaining = $usertarget-$achieved; 
 			$getuserdetails[$index]['userid'] = $getuserlist->user_id;
 			$getuserdetails[$index]['name'] = $getuserlist->user_name;
 			$getuserdetails[$index]['picture'] = "/bizzcrm/public/userpicture/".$getuserlist->user_picture;
-			$getuserdetails[$index]['target'] = $getuserlist->user_target;
+			$getuserdetails[$index]['target'] = $usertarget;
 			$getuserdetails[$index]['achieved'] = $achieved;
 			$getuserdetails[$index]['remaining'] = $remaining;
 			$index++;

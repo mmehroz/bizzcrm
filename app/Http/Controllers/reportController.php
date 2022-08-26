@@ -23,6 +23,10 @@ class reportController extends Controller
 		$to = $request->to;
 		$getyearandmonth = explode('-', $to);
 		$finalyearandmonth = $getyearandmonth[0].'-'.$getyearandmonth[1];
+		$getfromyearandmonth = explode('-', $from);
+		$year = $getfromyearandmonth[0];
+		$month = $getfromyearandmonth[1];
+		$targetdate = $year.'-'.$month;
 		$getuserlist = DB::table('user')
 		->select('user_id','role_id','user_name','user_target','user_picture')
 		->whereIn('role_id',[3,4])
@@ -41,12 +45,18 @@ class reportController extends Controller
 		->where('status_id','=',1)
 		->where('campaign_id','=',$request->campaign_id)
 		->get();
-		$getcompletetarget = DB::table('user')
+		$getbasiccompletetarget = DB::table('user')
 		->select('user_target')
 		->whereIn('role_id',[3,4,5,6])
 		->where('status_id','=',1)
 		->where('campaign_id','=',$request->campaign_id)
 		->sum('user_target');
+		$completetargetincrement = DB::table('usertarget')
+		->select('usertarget_target')
+		->where('usertarget_month','<=',$targetdate)
+		->where('status_id','=',1)
+		->sum('usertarget_target');
+		$getcompletetarget = $getbasiccompletetarget+$completetargetincrement;
 		$getmonth = $request->usertarget_month;
 		$getuserdetails = array();
 		$getdesignerdetails = array();
@@ -164,6 +174,13 @@ class reportController extends Controller
 		$getcompletetargetunpaid = $getcompletetargetachieved-$getcompletetargetpaid-$getcompletetargetcancel; 
 		$index=0;
 		foreach ($getuserlist as $getuserlist) {
+			$targetincrement = DB::table('usertarget')
+			->select('usertarget_target')
+			->where('user_id','=',$getuserlist->user_id)
+			->where('usertarget_month','<=',$targetdate)
+			->where('status_id','=',1)
+			->sum('usertarget_target');
+			$user_target = $getuserlist->user_target+$targetincrement;
 			$getlogotargetgross = DB::table('logoorder')
 			->select('logoorder_amount')
 			->where('status_id','=',1)
@@ -293,6 +310,7 @@ class reportController extends Controller
 			->count('order_id');
 			$getunpaidorder = $getcompleteprder-$getpaidorder-$getcancelorder;
 			$getcompleteunpaidorder = $getfullcompleteprder-$getcompletepaidorder-$getcompletecancelorder;
+			$getuserlist->user_target = $user_target;
 			$getuserlist->webtargetgross = $getwebtargetgross;
 			$getuserlist->webtargetpaid = $getwebtargetpaid;
 			$getuserlist->logotargetgross = $getlogotargetgross;
