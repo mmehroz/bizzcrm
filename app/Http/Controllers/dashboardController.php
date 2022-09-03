@@ -4480,15 +4480,15 @@ class dashboardController extends Controller
 		$max = DB::table('order')
 		->select('order_amountquoted')
 		->where('status_id','=',1)
-		->whereIn('orderstatus_id',[4,5,6,7,8,9,10,11,17])
+		->whereIn('orderstatus_id',[4,5,6,7,8,9,10,11,17,18])
 		->whereBetween('order_date', [$from, $to])
 		->sum('order_amountquoted');
-		$web = DB::table('weborder')
-		->select('weborder_amount')
+		$web = DB::table('webpaymentandorderdetail')
+		->select('weborderpayment_amount')
 		->where('status_id','=',1)
 		->whereIn('orderstatus_id',[4,5,7,8,9,10,11,17,18])
-		->whereBetween('weborder_date', [$from, $to])
-		->sum('weborder_amount');	
+		->whereBetween('weborderpayment_date', [$from, $to])
+		->sum('weborderpayment_amount');	
 		$logo = DB::table('logoorder')
 		->select('logoorder_amount')
 		->where('status_id','=',1)
@@ -4541,13 +4541,13 @@ class dashboardController extends Controller
 			->whereIn('orderstatus_id',[4,5,7,8,9,10,11,17,18])
 			->whereBetween('order_date', [$from, $to])
 			->sum('order_amountquoted');
-			$web = DB::table('weborder')
-			->select('weborder_amount')
+			$web = DB::table('webpaymentandorderdetail')
+			->select('weborderpayment_amount')
 			->where('status_id','=',1)
-			->whereIn('created_by',[$getuserlist->user_id, $globaluser_id])
+			->whereIn('order_createdby',[$getuserlist->user_id, $globaluser_id])
 			->whereIn('orderstatus_id',[4,5,7,8,9,10,11,17,18])
-			->whereBetween('weborder_date', [$from, $to])
-			->sum('weborder_amount');	
+			->whereBetween('weborderpayment_date', [$from, $to])
+			->sum('weborderpayment_amount');	
 			$logo = DB::table('logoorder')
 			->select('logoorder_amount')
 			->where('status_id','=',1)
@@ -4570,5 +4570,75 @@ class dashboardController extends Controller
 		}else{
 			return response()->json("Oops! Something Went Wrong", 400);
 		}
+	}
+	public function masterdashboard(Request $request){
+		$from = $request->from;
+		$to = $request->to;
+		$maxachieve = DB::table('order')
+		->select('order_amountquoted')
+		->where('status_id','=',1)
+		->where('campaign_id','=',1)
+		->whereIn('orderstatus_id',[4,5,7,8,9,10,11,17,18])
+		->whereBetween('order_date', [$from, $to])
+		->sum('order_amountquoted');
+		$maxpaid = DB::table('order')
+		->select('order_amountquoted')
+		->where('status_id','=',1)
+		->where('campaign_id','=',1)
+		->where('orderstatus_id','=',11)
+		->whereBetween('order_date', [$from, $to])
+		->sum('order_amountquoted');
+		$maxunpaid = $maxachieve-$maxpaid;
+
+		$globalachieve = DB::table('order')
+		->select('order_amountquoted')
+		->where('status_id','=',1)
+		->where('campaign_id','=',9)
+		->whereIn('orderstatus_id',[4,5,7,8,9,10,11,17,18])
+		->whereBetween('order_date', [$from, $to])
+		->sum('order_amountquoted');
+		$globalpaid = DB::table('order')
+		->select('order_amountquoted')
+		->where('status_id','=',1)
+		->where('campaign_id','=',9)
+		->where('orderstatus_id','=',11)
+		->whereBetween('order_date', [$from, $to])
+		->sum('order_amountquoted');
+		$globalunpaid = $globalachieve-$globalpaid;
+		
+		$webachieve = DB::table('webpaymentandorderdetail')
+		->select('weborderpayment_amount')
+		->where('status_id','=',1)
+		->whereIn('orderstatus_id',[4,5,7,8,9,10,11,17,18])
+		->whereBetween('weborderpayment_date', [$from, $to])
+		->sum('weborderpayment_amount');
+
+		$webpaid = DB::table('webpaymentandorderdetail')
+		->select('weborderpayment_amount')
+		->where('status_id','=',1)
+		->where('orderstatus_id','=',11)
+		->whereBetween('weborderpayment_date', [$from, $to])
+		->sum('weborderpayment_amount');
+		$webunpaid = $webachieve-$webpaid;
+
+
+		$logoachieve = DB::table('logoorder')
+		->select('logoorder_amount')
+		->where('status_id','=',1)
+		->whereIn('orderstatus_id',[4,5,7,8,9,10,11,17,18])
+		->whereBetween('logoorder_date', [$from, $to])
+		->sum('logoorder_amount');
+		$logopaid = DB::table('logoorder')
+		->select('logoorder_amount')
+		->where('status_id','=',1)
+		->where('orderstatus_id','=',11)
+		->whereBetween('logoorder_date', [$from, $to])
+		->sum('logoorder_amount');
+		$logounpaid = $logoachieve-$logopaid;
+		
+		$masterachieve = $maxachieve+$globalachieve+$webachieve+$logoachieve;
+		$masterpaid = $maxpaid+$globalpaid+$webpaid+$logopaid;
+		$masterunpaid = $maxunpaid+$globalunpaid+$webunpaid+$logounpaid;
+		return response()->json(['maxachieve' => $maxachieve,'maxpaid' => $maxpaid,'maxunpaid' => $maxunpaid,'globalachieve' => $globalachieve,'globalpaid' => $globalpaid,'globalunpaid' => $globalunpaid,'webachieve' => $webachieve,'webpaid' => $webpaid,'webunpaid' => $webunpaid,'logoachieve' => $logoachieve,'logopaid' => $logopaid,'logounpaid' => $logounpaid,'masterachieve' => $masterachieve,'masterpaid' => $masterpaid,'masterunpaid' => $masterunpaid],200);
 	}
 }

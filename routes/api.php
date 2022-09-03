@@ -184,6 +184,7 @@ Route::any('/topagentsfordashboard', [dashboardController::class, 'topagentsford
 Route::any('/dmeadmindashboard', [dashboardController::class, 'dmeadmindashboard']);
 Route::any('/cpaadmindashboard', [dashboardController::class, 'cpaadmindashboard']);
 Route::any('/leadashboard', [dashboardController::class, 'leadashboard']);
+Route::any('/masterdashboard', [dashboardController::class, 'masterdashboard']);
 
 Route::any('/maxachieve', [dashboardController::class, 'maxachieve']);
 Route::any('/displayteamreport', [dashboardController::class, 'displayteamreport']);
