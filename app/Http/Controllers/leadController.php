@@ -79,6 +79,7 @@ class leadController extends Controller
 		'lead_assignto'					=> "-1",
 		'lead_date'						=> date('Y-m-d'),
 		'lead_token'					=> $lead_token,
+		'order_token'					=> $lead_token."lead-order",
 		'orderstatus_id' 				=> 2,
 		'campaign_id' 					=> $request->campaign_id,
 		'status_id'	 					=> 1,
@@ -114,16 +115,25 @@ class leadController extends Controller
         	$orderindex = 0 ;
         	$orderfilename = array();
         	foreach($orderimages as $oi){
+        		$ordersaveattachment = array();
     			if( $oi->isValid()){
         			$number = rand(1,999);
 			        $numb = $number / 7 ;
-			        $foldername = $lead_token;
+			        $foldername = $lead_token."lead-order";
 					$extension = $oi->getClientOriginalExtension();
-		            $orderfilename[$orderindex] = $numb.$oi->getClientOriginalName();
+		            $orderfilename[$orderindex] = $oi->getClientOriginalName();
 		            $oi->move(public_path('order/'.$foldername),$orderfilename[$orderindex]);
-		            $orderfilename[$orderindex] = $numb.$oi->getClientOriginalName();
+		            $orderfilename[$orderindex] = $oi->getClientOriginalName();
+		            $ordersaveattachment[] = array(
+					'attachment_name'		=> $orderfilename[$orderindex],
+					'order_attachmenttoken'	=> $lead_token."lead-order",
+					'status_id' 			=> 1,
+					'created_by'			=> $request->user_id,
+					'created_at'			=> date('Y-m-d h:i:s'),
+					);
 			    	$orderindex++;
         		}
+        		DB::table('attachment')->insert($ordersaveattachment);
         	}
 		if($save){
 			return response()->json(['message' => 'Lead Created Successfully'],200);
@@ -434,17 +444,25 @@ class leadController extends Controller
     	$indexorder = 0 ;
     	$orderfilename = array();
     		foreach($imagesorder as $ima){
-    			$saveattachment = array();
+    			$ordersaveattachment = array();
         		if( $ima->isValid()){
         			$number = rand(1,999);
 			        $numb = $number / 7 ;
-			        $foldername = $request->lead_token;
+			        $foldername = $request->lead_token."lead-order";
 					$extension = $ima->getClientOriginalExtension();
 		            $orderfilename[$indexorder] = $ima->getClientOriginalName();
 		            $orderfilename[$indexorder] = $ima->move(public_path('order/'.$foldername),$orderfilename[$indexorder]);
 		            $orderfilename[$indexorder] = $ima->getClientOriginalName();
+		            $ordersaveattachment[] = array(
+					'attachment_name'		=> $filename[$index],
+					'order_attachmenttoken'	=> $request->lead_token,
+					'status_id' 			=> 1,
+					'created_by'			=> $request->user_id,
+					'created_at'			=> date('Y-m-d h:i:s'),
+					);
 					$indexorder++;
         		}
+        		DB::table('attachment')->insert($ordersaveattachment);
         	}
         }
 		if($update){
@@ -525,7 +543,7 @@ class leadController extends Controller
 			'order_instructions'		=> $leaddetail->lead_instructions,
 			'order_assignto'			=> $leaddetail->lead_assignto,
 			'order_token'				=> $leaddetail->lead_token,
-			'order_attachmenttoken'		=> $leaddetail->lead_token,
+			'order_attachmenttoken'		=> $leaddetail->order_token,
 			'order_status'				=> "Assigned",
 			'client_id' 				=> $clientid,
 			'campaign_id' 				=> $leaddetail->campaign_id,
@@ -546,6 +564,46 @@ class leadController extends Controller
 		]);
 		if($updateorderstatus){
 			return response()->json(['message' => 'Lead Processed Successfully'],200);
+		}else{
+			return response()->json("Oops! Something Went Wrong", 400);
+		}
+	}
+	public function saveleadfollowup(Request $request){
+		$validate = Validator::make($request->all(), [ 
+	      'leadfollowup_comment'	=> 'required',
+	      'freshlead_id'			=> 'required',
+	    ]);
+     	if ($validate->fails()) {    
+			return response()->json("Fields are Required", 400);
+		}
+		$adds[] = array(
+		'leadfollowup_comment' 	=> $request->leadfollowup_comment,
+		'freshlead_id' 			=> $request->freshlead_id,
+		'status_id'		 		=> 1,
+		'created_by'	 		=> $request->user_id,
+		'created_at'	 		=> date('Y-m-d h:i:s'),
+		);
+		$save = DB::table('leadfollowup')->insert($adds);
+		if($save){
+			return response()->json(['message' => 'Followup Saved Successfully'],200);
+		}else{
+			return response()->json("Oops! Something went wrong", 400);
+		}
+	}
+	public function getleadfollowup(Request $request){
+		$validate = Validator::make($request->all(), [ 
+	      'freshlead_id'			=> 'required',
+	    ]);
+	 	if ($validate->fails()) {    
+			return response()->json("Lead Id Required", 400);
+		}
+		$getdealfollowup = DB::table('getleadfollowup')
+		->select('*')
+		->where('freshlead_id','=',$request->freshlead_id)
+		->where('status_id','=',1)
+		->get();
+		if($getdealfollowup){
+			return response()->json(['data' => $getdealfollowup,'message' => 'Followup List'],200);
 		}else{
 			return response()->json("Oops! Something Went Wrong", 400);
 		}

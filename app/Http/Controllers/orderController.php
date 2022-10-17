@@ -1485,7 +1485,7 @@ class orderController extends Controller
 			->limit(50)
 			->get();
 			}else{
-			if ($request->user_id == 1) {
+			if ($request->user_id == 1 || $request->user_id == 191) {
 				$assignto = "1";
 			}else{
 				$assignto = "-1";

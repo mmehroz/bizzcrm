@@ -97,6 +97,7 @@ class reportController extends Controller
 		->where('status_id','=',1)
 		->where('orderstatus_id','=',11)
 		->whereBetween('weborderpayment_date', [$from, $to])
+		->where('campaign_id','=',$request->campaign_id)
 		->sum('weborderpayment_amount');	
 		$getcompletewebtargetpaid = $getcompletewebtargetpaidmaster+$getcompletewebtargetpaidmilestone;
 		$getcompletetargetachievedworker = DB::table('order')

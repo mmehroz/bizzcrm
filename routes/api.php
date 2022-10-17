@@ -382,6 +382,8 @@ Route::any('/unpickleadorder', [leadController::class, 'unpickleadorder']);
 Route::any('/processlead', [leadController::class, 'processlead']);
 Route::any('/savelead', [leadController::class, 'savelead']);
 Route::any('/saveleadlist', [leadController::class, 'saveleadlist']);
+Route::any('/saveleadfollowup', [leadController::class, 'saveleadfollowup']);
+Route::any('/getleadfollowup', [leadController::class, 'getleadfollowup']);
 });
 
 Route::get('/pusherauth', function (Request $request) {
