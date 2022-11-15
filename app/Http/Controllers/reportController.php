@@ -461,11 +461,13 @@ class reportController extends Controller
 		}
 		$commissiondata =  array();
 		$achieveddate = '-';
-		$finalcommisionamount;
-		$finalrecoveryamount;
-		$finalrate;
+		$finalcommisionamount=0;
+		$finalrecoveryamount=0;
+		$finalrate=0;
 		$commissionindex=0;
 		$indexforallpaidorders = 0;
+		$finalpaidorders = 0;
+		$finalrecoveryorders = 0;
 		foreach ($list as $lists) {
 			$getpaidamount = DB::table('order')
 			->select('order_amountquoted')

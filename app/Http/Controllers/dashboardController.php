@@ -4520,10 +4520,12 @@ class dashboardController extends Controller
 				$globaluser_id = 170;
 			}elseif ($getuserlist->user_id == 9) {
 				$globaluser_id = 172;
-			}elseif ($getuserlist->user_id == 12) {
-				$globaluser_id = 184;
+			}elseif ($getuserlist->user_id == 178) {
+				$globaluser_id = 0;
 			}elseif ($getuserlist->user_id == 131) {
 				$globaluser_id = 171;
+			}elseif ($getuserlist->user_id == 179) {
+				$globaluser_id = 0;
 			}else{
 				$globaluser_id = 0;
 			}

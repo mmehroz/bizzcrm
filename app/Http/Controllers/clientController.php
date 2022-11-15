@@ -174,7 +174,7 @@ class clientController extends Controller
 			}
 		$getpreviousmonth = date('Y-m-d', strtotime('-2 months'));
 		$getclientlist;
-		if ($request->role_id == 1 || $request->role_id == 2 || $request->role_id == 9 || $request->user_id == 131) {
+		if ($request->role_id == 1 || $request->role_id == 2 || $request->role_id == 9 || $request->user_id == 131 || $request->user_id == 4) {
 			$getclientlist = DB::table('getclientlist')
 			->select('*')
 			->where('campaign_id','=',$request->campaign_id)
