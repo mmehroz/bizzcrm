@@ -22,6 +22,7 @@ use App\Http\Controllers\dmeuploaderController;
 use App\Http\Controllers\denonqualifyController;
 use App\Http\Controllers\demerchantController;
 use App\Http\Controllers\leadController;
+use App\Http\Controllers\billingmerchantController;
 /*
 |---------------------------------------------------------------------	-----
 | API Routes
@@ -384,6 +385,12 @@ Route::any('/savelead', [leadController::class, 'savelead']);
 Route::any('/saveleadlist', [leadController::class, 'saveleadlist']);
 Route::any('/saveleadfollowup', [leadController::class, 'saveleadfollowup']);
 Route::any('/getleadfollowup', [leadController::class, 'getleadfollowup']);
+
+Route::any('/addbillingmerchant', [billingmerchantController::class, 'addbillingmerchant']);
+Route::any('/updatebillingmerchant', [billingmerchantController::class, 'updatebillingmerchant']);
+Route::any('/billingmerchantlist', [billingmerchantController::class, 'billingmerchantlist']);
+Route::any('/billingmerchantdetails', [billingmerchantController::class, 'billingmerchantdetails']);
+Route::any('/deletebillingmerchant', [billingmerchantController::class, 'deletebillingmerchant']);
 });
 
 Route::get('/pusherauth', function (Request $request) {
