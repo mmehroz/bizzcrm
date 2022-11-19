@@ -1783,6 +1783,7 @@ class orderController extends Controller
 		if($request->orderstatus_id == 10){
 		$validate = Validator::make($request->all(), [ 
 	      'order_paypalinvoicenumber'	=> 'required',
+		  'billingmerchant_id'			=> 'required',
 	    ]);
      	if ($validate->fails()) {    
 			return response()->json("Fields Required", 400);
@@ -1823,6 +1824,7 @@ class orderController extends Controller
 				->update([
 				'orderstatus_id' 			=> $request->orderstatus_id,
 				'order_paypalinvoicenumber' => $request->order_paypalinvoicenumber,
+				'billingmerchant_id' 		=> $request->billingmerchant_id,
 			]); 
 			}elseif($request->orderstatus_id == 18){
 			$updateorderstatus  = DB::table('order')
@@ -1865,6 +1867,7 @@ class orderController extends Controller
 				->update([
 				'orderstatus_id' 			=> $request->orderstatus_id,
 				'order_paypalinvoicenumber' => $request->order_paypalinvoicenumber,
+				'billingmerchant_id' 		=> $request->billingmerchant_id,
 			]);
 			}elseif($request->orderstatus_id == 11){
 			$updateorderstatus  = DB::table('order')

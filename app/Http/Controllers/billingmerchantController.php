@@ -75,7 +75,7 @@ class billingmerchantController extends Controller
 		);
 		$save = DB::table('billingmerchant')->insert($adds);
 		if($save){
-			return response()->json(['data' => $adds,'message' => 'Added Successfully'],200);
+			return response()->json(['message' => 'Added Successfully'],200);
 		}else{
 			return response()->json("Oops! Something Went Wrong", 400);
 		}
