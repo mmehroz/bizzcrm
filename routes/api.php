@@ -391,6 +391,8 @@ Route::any('/updatebillingmerchant', [billingmerchantController::class, 'updateb
 Route::any('/billingmerchantlist', [billingmerchantController::class, 'billingmerchantlist']);
 Route::any('/billingmerchantdetails', [billingmerchantController::class, 'billingmerchantdetails']);
 Route::any('/deletebillingmerchant', [billingmerchantController::class, 'deletebillingmerchant']);
+Route::any('/addwithdrawalamount', [billingmerchantController::class, 'addwithdrawalamount']);
+Route::any('/withdrawalamountlist', [billingmerchantController::class, 'withdrawalamountlist']);
 });
 
 Route::get('/pusherauth', function (Request $request) {

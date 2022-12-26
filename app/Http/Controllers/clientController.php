@@ -117,7 +117,7 @@ class clientController extends Controller
 		      'instagramid'				=> 'required',
 		      'state'					=> 'required',
 		      'city' 					=> 'required',
-		      'country'					=> 'required',
+		    //   'country'					=> 'required',
 		      'timezone' 				=> 'required',
 		      'email'					=> 'required',
 		      'alternateemail' 			=> 'required',
@@ -130,7 +130,7 @@ class clientController extends Controller
 		      'client_id'				=> 'required',
 		    ]);
 	     	if ($validate->fails()) {    
-				return response()->json("Fields Required", 400);
+				return response()->json($validate->errors(), 400);
 			}
 		$updateclient  = DB::table('client')
 		->where('client_id','=',$request->client_id)
@@ -145,7 +145,7 @@ class clientController extends Controller
 		'client_instagramid' 			=> $request->instagramid,
 		'client_state' 					=> $request->state,
 		'client_city' 					=> $request->city,
-		'location_id'					=> $request->country,
+		// 'location_id'					=> $request->country,
 		'client_timezone' 				=> $request->timezone,
 		'client_email' 					=> $request->email,
 		'client_alternateemail' 		=> $request->alternateemail,

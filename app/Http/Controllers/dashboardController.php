@@ -589,9 +589,36 @@ class dashboardController extends Controller
 
 			$timestamp = strtotime(date('Y-m-d'));
 			$daysRemaining = (int)date('t', $timestamp) - (int)date('j', $timestamp);
+
+			$billingmerchantlist = DB::table('billingmerchant')
+			->select('*')
+			->where('status_id','=',1)
+			->get();
+			if(isset($billingmerchantlist)){
+				$sortbillingmerchant = array();
+				$mindex=0;
+				foreach($billingmerchantlist as $billingmerchantlists){
+					$grossamount = DB::table('order')
+					->select('order_amountquoted')
+					->where('billingmerchant_id','=',$billingmerchantlists->billingmerchant_id)
+					->where('status_id','=',1)
+					->sum('order_amountquoted');
+					$withdrawalamount = DB::table('withdrawal')
+					->select('withdrawal_amount')
+					->where('withdrawal_month','=',$finalyearandmonth)
+					->where('status_id','=',1)
+					->sum('withdrawal_amount');
+					$netbalance = $grossamount-$withdrawalamount;
+					$billingmerchantlists->grossamount = $grossamount;
+					$billingmerchantlists->withdrawalamount = $withdrawalamount;
+					$billingmerchantlists->netamount = $netbalance;
+					$sortbillingmerchant[$mindex] = $billingmerchantlists;
+					$mindex++;
+				}
+			}
 			// dd($daysRemaining);
 		if(isset($getuser)){
-		return response()->json(['userdata' => $getuser, 'daileordercount' => $datewiseordercount,'orderscount' => $ordercounts, 'message' => 'User Dashboard Details'],200);
+			return response()->json(['userdata' => $getuser, 'daileordercount' => $datewiseordercount,'orderscount' => $ordercounts, 'sortbillingmerchant' => $sortbillingmerchant,  'message' => 'User Dashboard Details'],200);
 		}else{
 			return response()->json("Oops! Something Went Wrong", 400);
 		}
@@ -4524,7 +4551,9 @@ class dashboardController extends Controller
 				$globaluser_id = 0;
 			}elseif ($getuserlist->user_id == 131) {
 				$globaluser_id = 171;
-			}elseif ($getuserlist->user_id == 179) {
+			}elseif ($getuserlist->user_id == 200) {
+				$globaluser_id = 179;
+			}elseif ($getuserlist->user_id == 201) {
 				$globaluser_id = 0;
 			}else{
 				$globaluser_id = 0;
@@ -4539,7 +4568,14 @@ class dashboardController extends Controller
 			$max = DB::table('order')
 			->select('order_amountquoted')
 			->where('status_id','=',1)
-			->whereIn('created_by',[$getuserlist->user_id, $globaluser_id])
+			->where('created_by','=',$getuserlist->user_id)
+			->whereIn('orderstatus_id',[4,5,7,8,9,10,11,17,18])
+			->whereBetween('order_date', [$from, $to])
+			->sum('order_amountquoted');
+			$global = DB::table('order')
+			->select('order_amountquoted')
+			->where('status_id','=',1)
+			->where('created_by','=',$globaluser_id)
 			->whereIn('orderstatus_id',[4,5,7,8,9,10,11,17,18])
 			->whereBetween('order_date', [$from, $to])
 			->sum('order_amountquoted');
@@ -4557,7 +4593,7 @@ class dashboardController extends Controller
 			->whereIn('orderstatus_id',[4,5,7,8,9,10,11,17,18])
 			->whereBetween('logoorder_date', [$from, $to])
 			->sum('logoorder_amount');	
-			$achieved = $max+$web+$logo;
+			$achieved = $global+$max+$web+$logo;
 			$remaining = $usertarget-$achieved; 
 			$getuserdetails[$index]['userid'] = $getuserlist->user_id;
 			$getuserdetails[$index]['name'] = $getuserlist->user_name;
