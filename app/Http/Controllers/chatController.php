@@ -36,8 +36,7 @@ class chatController extends Controller
     public $successStatus = 200;
     public function sendMessage(Request $request)
     {
-    // dd($request);
-        $user = DB::table('elsemployees')->where('elsemployees_empid', $request->loginuser_id)->first();
+        $user = DB::table('elsemployees')->where('elsemployees_empid', $request->loginuser_id)->select('elsemployees_empid')->first();
         $error_msg =  $attachment_type = $attachmentorname = $attachmentnewname = null;
         $att_new_name = array();
         $original_name = array();
@@ -49,14 +48,11 @@ class chatController extends Controller
             $indexattachment=0;
         	foreach($fil as $file){
             if ($file->getSize() < 150000000) {
-                            $original_name[$indexattachment] = $file->getClientOriginalName();
-                            $att_new_name[$indexattachment] = Str::uuid() . "." . $file->getClientOriginalExtension();
-                            Storage::putFileAs('public\\chat_attachments\\', $file, $att_new_name[$indexattachment]);
-                            // dd($original_name);
-
+                $original_name[$indexattachment] = $file->getClientOriginalName();
+                $att_new_name[$indexattachment] = Str::uuid() . "." . $file->getClientOriginalExtension();
+                Storage::putFileAs('public\\chat_attachments\\', $file, $att_new_name[$indexattachment]);
             } else {
                 return response()->json(['message' => 'File size is too large!'],400);
-                // $error_msg = "File size is too long!";
             }
             $indexattachment++;
         	}
@@ -78,7 +74,6 @@ class chatController extends Controller
                     'message_forwarded' => $request['message_forwarded'],
                 );
                 $message_created = Message::create($message);
-        // dd($message_created);
                 $message_id = DB::getPdo()->lastInsertId();
                 $msg_get = Message::where('message_id', $message_id)->first();
                 $user_from = DB::table('elsemployees')->where('elsemployees_empid', $msg_get->message_from)->first();
@@ -95,11 +90,6 @@ class chatController extends Controller
                     'message_quoteuser' => $msg_get->message_quoteuser,
                     'message_forwarded' => $msg_get->message_forwarded,
                 );
-                    // $sendingtoname = DB::table('elsemployees')->where('elsemployees_empid', $msg_get->message_from)->select('elsemployees_name')->first();
-                    // $ch = curl_init("https://8562583c-fb65-44fd-8627-417d33f86cb0.pushnotifications.pusher.com/publish_api/v1/instances/8562583c-fb65-44fd-8627-417d33f86cb0/publishes");
-                    // curl_setopt($ch, CURLOPT_HTTPHEADER, array("Content-Type:application/json", "Authorization:Bearer 252BAE737B14B855E19A86C8F352A07206F940D6DF731BF6ACC168F81E36CDC8" ));
-                    // curl_setopt($ch, CURLOPT_POSTFIELDS, '{"interests":["'.$msg_get->message_to.'"],"web":{"notification":{"title":"'.$sendingtoname->elsemployees_name.'","body":"'.$msg_get->message_body.'"}}}');
-                    // $result = curl_exec($ch);
             }
             else{
                 $groupmessage = array(
@@ -117,10 +107,10 @@ class chatController extends Controller
                 $groupmessage_created = GroupMessage::create($groupmessage);
                 $groupmessage_id = DB::getPdo()->lastInsertId();
                 $msg_get = GroupMessage::where('groupmessage_id', $groupmessage_id)->first();
-                $user_from = DB::table('elsemployees')->where('elsemployees_empid', $msg_get->user_id)->first();
+                $user_from = DB::table('elsemployees')->where('elsemployees_empid', $msg_get->user_id)->select('elsemployees_name','elsemployees_image')->first();
                 $messageData = array(
                     'message_id' => $msg_get->groupmessage_id,
-                    'from_userid' => $msg_get->user_id, //'user_id', => $msg_get->user_id,
+                    'from_userid' => $msg_get->user_id,
                     'group_id' => $msg_get->group_id,
                     'groupmessage_body' => $msg_get->groupmessage_body,
                     'groupmessage_attachment' => $msg_get->groupmessage_attachment,
@@ -146,56 +136,26 @@ class chatController extends Controller
                 );
                 }
                 DB::connection('mysql')->table('groupmessageseen')->insert($addseen);
-                $getunseenmesg = DB::table('groupmessageseen')
-                    ->select('groupmessageseen_id')
-                    ->where('group_id','=', $msg_get->group_id)
-                    ->where('user_id','=', $request->user_id)
-                    ->where('groupmessageseen_seen','=', 1)
-                    ->count('groupmessageseen_id');
                 DB::table('group')
                 ->where('group_id','=',$msg_get->group_id)
                 ->update([
                 'lastmessage' 		=> $msg_get->groupmessage_body,
                 'attachment' 		=> $msg_get->groupmessage_originalname,
                 'groupmessagetime' 	=> date('Y-m-d h:i:s'),
-                'groupunseenmesg' 	=> $getunseenmesg,
                 ]); 
                 }
                 $messageData['from_username'] = $user_from->elsemployees_name;
                 $messageData['from_userpicture'] = $user_from->elsemployees_image;
                 $messageData['message_time'] = $msg_get->created_at->diffForHumans(Carbon::now());
                 $messageData['fullTime'] = $msg_get->created_at->toDateTimeString();
-                // Event::dispatch(new MessageSent(
-                // $user,
-                // [
-                //     'user' => $user->elsemployees_empid,
-                //     'message' => $messageData,
-                // ],
-                // ));
                 if($request['group_id']){
                 $groupmembers = DB::table('groupmember')->where('group_id', $request['group_id'])->get();
                 foreach($groupmembers as $single_member){
                     $members[$index] = "$single_member->user_id";
                     $index++;
                 }
-                //  $sendingtogroupname = DB::table('group')->where('group_id', $msg_get->group_id)->select('group_name')->first();
-                //     $ch = curl_init("https://8562583c-fb65-44fd-8627-417d33f86cb0.pushnotifications.pusher.com/publish_api/v1/instances/8562583c-fb65-44fd-8627-417d33f86cb0/publishes");
-                //     curl_setopt($ch, CURLOPT_HTTPHEADER, array("Content-Type:application/json", "Authorization:Bearer 252BAE737B14B855E19A86C8F352A07206F940D6DF731BF6ACC168F81E36CDC8" ));
-                //     curl_setopt($ch, CURLOPT_POSTFIELDS, '{"interests":'.json_encode($members).',"web":{"notification":{"title":"'.$user_from->elsemployees_name.' in '.$sendingtogroupname->group_name.'","body":"'.$msg_get->groupmessage_body.'"}}}');
-                //     $result = curl_exec($ch);
-                // Event::dispatch(new MessageSent(
-                //     $user,
-                //     [
-                //         'user' => $user->elsemployees_empid,
-                //         'message' => $messageData,
-                //     ],
-                //     $members,
-                // ));
             }
         }
-        // dd($message_created);
-        // event(new MessageSent('hello world','1'));
-        // broadcast(new MessageSent('hello world','1'))->toOthers();
         return response()->json(['data' => $messageData,'members' => $members,'message' => 'Message Sent Successfully'],200);
     }
     public function fetchMessage(Request $request)
@@ -209,7 +169,7 @@ class chatController extends Controller
         ->where('status_id','=',1)
         ->where('message_to','=',$request['from_id'])
         ->orderBy('fullTime','DESC')
-        ->limit(20)
+        ->limit(10)
         ->get()->toArray(); 	
     	if ($messages) {
             return Response::json([ 'messages' => $messages]);
@@ -230,7 +190,7 @@ class chatController extends Controller
         ->where('message_to','=',$request['from_id'])
         ->where('message_id','<',$request->message_id)
         ->orderBy('fullTime','DESC')
-        ->limit(20)
+        ->limit(15)
         ->get()->toArray(); 
     	if ($messages) {
             return Response::json([ 'messages' => $messages]);
@@ -252,14 +212,13 @@ class chatController extends Controller
         ->select('user_id')
         ->where('status_id','=',1)
         ->where('group_id','=',$request['group_id'])
-        ->limit(5)
+        ->limit(3)
         ->get();
         $getseenmsgid = array();
         $seenindex = 0;
         foreach ($getgroupmember as $getgroupmembers) {
-        	$getseenmsgid[$seenindex] = DB::table('groupmessageseen')
-        	->join('elsemployees','elsemployees.elsemployees_empid', '=','groupmessageseen.user_id')
-	        ->select('groupmessage_id','user_id','elsemployees_image','elsemployees_name')
+        	$getseenmsgid[$seenindex] = DB::table('groupseenwithuser')
+        	->select('groupmessage_id','user_id','elsemployees_image','elsemployees_name')
 	        ->where('group_id','=', $request['group_id'])
 	        ->where('user_id','=',$getgroupmembers->user_id)
 	        ->where('groupmessageseen_seen','=', 2)
@@ -343,56 +302,23 @@ class chatController extends Controller
  	public function getContactsUser(Request $request)
     {
         $loginuser_id =  $request->loginuser_id;
-        // $users = Message::join('elsemployees',  function ($join)use($loginuser_id) {
-        //     $join->on('message.message_from', '=', 'elsemployees.elsemployees_empid')
-        //         ->orOn('message.message_to', '=', 'elsemployees.elsemployees_empid');
-        // })
-        //     ->where('message.message_from', $loginuser_id)
-        //     ->orWhere('message.message_to', $loginuser_id)
-        //     ->orderBy('message.created_at', 'desc')
-        //     ->get()
-        //     ->unique('elsemployees_empid');
-	            $users = DB::table('chatuser')
-	            ->where('elsemployees_empid','!=', $loginuser_id)
-	            ->where('message_from', $loginuser_id)
-	            ->orWhere('message_to', $loginuser_id)
-	            ->where('elsemployees_empid','!=', $loginuser_id)
-	            ->orderBy('created_at', 'desc')
-	            // ->select('chatuser.*', IF(unseen == 0){ "1"}else{ "0"})
-	            ->get()
-	            ->unique('elsemployees_empid');
-            // $contacts = array();
-            // if ($users->count() > 0) {
-            // $contacts = null;
-            // $contacts = $userCollection = [] ;
-            // foreach ($users as $singleuser) {
-            //     if ($singleuser->elsemployees_empid != $loginuser_id) {
-                    // $userCollection = DB::table('elsemployees')->where('elsemployees_empid', $singleuser->elsemployees_empid)->select('elsemployees_empid','elsemployees_name','elsemployees_image')->first();
-                    // $unseen = Message::where('message_from',$singleuser->elsemployees_empid)->where('message_to', $loginuser_id)
-                    // ->where('message_seen', 0)->count();
-                    // $singleuser->unseen = $unseen;
-                    // $contacts[] = $singleuser;
-                    // $userCollection->last_msg = Message::where('message_from',$loginuser_id)
-                    // ->where('message_to', $singleuser->elsemployees_empid)
-                    // ->where('status_id', 1)
-                    // ->orWhere('message_from', $singleuser->elsemployees_empid)->where('message_to',$loginuser_id)
-                    // ->orderBy('created_at','DESC')->latest()->first();
-                    // array_push($contacts, $userCollection);
-        //         }
-        //     }
-        // }
-        $contacts = $this->paginate($users);
-        return response()->json([
-            'contacts' => $contacts/*'Your contact list is empty',*/
-        ], $this->successStatus);
+            $users = DB::table('chatuser')
+            ->select('elsemployees_empid','elsemployees_name','elsemployees_image','message_body','message_attachment','updated_at','message_seen','unseen')
+            ->where('elsemployees_empid','!=', $loginuser_id)
+            ->where('message_from', $loginuser_id)
+            ->orWhere('message_to', $loginuser_id)
+            ->where('elsemployees_empid','!=', $loginuser_id)
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->unique('elsemployees_empid');
+            $contacts = $this->paginate($users);
+        return response()->json(['contacts' => $contacts], $this->successStatus);
     }
     public function getContactsTotal(Request $request)
     {
         $campaign_id = $request->campaign_id;
         $contacts_total = DB::table('elsemployees')->where('elsemployees_status', 2)->select('elsemployees_empid', 'elsemployees_name', 'elsemployees_roleid', 'elsemployees_image')->get();
-        return response()->json([
-            'contacts' => $contacts_total,/*'Your contact list is empty',*/
-        ], $this->successStatus);
+        return response()->json(['contacts' => $contacts_total], $this->successStatus);
     }
     public function searchUser(Request $request)
     {
@@ -408,22 +334,15 @@ class chatController extends Controller
         })
         ->where('elsemployees_name', '!=',  $request->loginuser_name)
         ->get();
-        return response()->json([
-            'records' => $records->count() > 0
-                ? $records
-                : [],
-        ], $this->successStatus);
+        return response()->json(['records' => $records->count() > 0? $records: []], $this->successStatus);
     }
     public function download(Request $request)
     {
-    	// return response()->json("ssss");
     	$fileName = $request->fileName;
         $path = storage_path() . '/app/public/chat_attachments/'. $fileName;
         if (file_exists($path)) {
-
             $att_get = Message::where('message_attachment', $fileName)->first();
             $original_name = $att_get['message_originalname'];
-        // dd($path);
             return Storage::disk('chat')->download($fileName, $original_name);
         } else {
             return abort(404, "Sorry, File does not exist in our server or may have been deleted!");
@@ -434,17 +353,13 @@ class chatController extends Controller
                 ->where('message_to',$request->loginuser_id)
                 ->where('message_seen', 0)
                 ->update(['message_seen' => 1]);
-        return Response::json([
-            'status' => $seen,
-        ], $this->successStatus);
+        return Response::json(['status' => $seen], $this->successStatus);
     }
     public function unseen(Request $request)
     {
     	$unseen = Message::where('message_from',$request->user_id)->where('message_to', $request->loginuser_id)
                     ->where('message_seen', 0)->count();
-        return response()->json([
-            'num_unseen' => $unseen,
-        ], $this->successStatus);
+        return response()->json(['num_unseen' => $unseen], $this->successStatus);
     }
    public function getAllGroups(Request $request)
     {
@@ -454,63 +369,19 @@ class chatController extends Controller
     }
     public function getUserGroups(Request $request)
     {
-        // $usergroups = DB::table('groupmember')->where('user_id', $request->loginuser_id)->where('status_id', 1)->get();
-        // $groups = [];
-        // $indexmember=0;
-        // foreach($usergroups as $singlegroup){
-        // $groupget = DB::table('group')->where('group.group_id', $singlegroup->group_id)
-        // 	->where('group.status_id', 1)
-        //     ->first();
-        // $getgroupmember = DB::table('groupmember')->where('group_id', $singlegroup->group_id)->where('status_id', 1)->select('user_id')->get();
-        // $gm = array();
-        // foreach ($getgroupmember as $getgroupmembers) {
-        //     $gm[] = $getgroupmembers->user_id;
-
-        // }
-        // $mergemembers = implode(',', $gm);
-        //     if($groupget != null){
-        //     array_push($groups, $groupget);
-        //     $groups[$indexmember]->memberid = $mergemembers;
-        //     $indexmember++;
-        //     }
-        // }
-        // $index=0;
-        // foreach ($groups as $groupss) {
-        //     $groupmessage = DB::table('groupmessage')->where('groupmessage.group_id', $groupss->group_id)
-        //     ->where('status_id', 1)
-        //     ->orderBy('groupmessage.created_at', 'desc')
-        //     ->select('groupmessage.groupmessage_body','groupmessage.groupmessage_attachment','groupmessage.created_at')
-        //     ->first();
-        //     $getunseenmesg = DB::table('groupmessageseen')
-        //     ->select('groupmessageseen_id')
-        //     ->where('group_id','=', $groupss->group_id)
-        //     ->where('user_id','=', $request->user_id)
-        //     ->where('groupmessageseen_seen','=', 1)
-        //     ->count('groupmessageseen_id'); 
-        //     if (isset($groupmessage->groupmessage_body)) {
-        //     $groups[$index]->lastmessage = $groupmessage->groupmessage_body;
-        //     $groups[$index]->attachment = $groupmessage->groupmessage_attachment;
-        //     $groups[$index]->groupmessagetime = $groupmessage->created_at;
-        //     $groups[$index]->groupunseenmesg = $getunseenmesg;
-        //     }else{
-        //     $groups[$index]->lastmessage = "";
-        //     $groups[$index]->attachment = "";
-        //     $groups[$index]->groupmessagetime = "";
-        //     $groups[$index]->groupunseenmesg = "";
-        //     }
-        //     $index++;
-        // }
         $usergroups = DB::table('groupmember')->where('user_id', $request->loginuser_id)->where('status_id', 1)->select('group_id')->get();
         $groupids = array();
         foreach($usergroups as $singlegroup){
             $groupids[] = $singlegroup->group_id;
         }            
         $groups = DB::table('group')
-                    ->whereIn('group_id',$groupids)
-                    ->where('status_id', 1)
-                    ->orderBy('groupmessagetime','DESC')
-                    ->get();
-        return $groups;
+                ->select( DB::raw("(SELECT count(groupmessageseen_id) FROM groupmessageseen as gs WHERE gs.group_id = group.group_id AND gs.user_id = {$request->user_id} AND gs.groupmessageseen_seen = 1) as groupunseenmesg"),'group_id','group_name','group_image','groupmessagetime','lastmessage','memberid')
+                ->whereIn('group_id',$groupids)
+                ->where('status_id', 1)
+                ->orderBy('groupmessagetime','DESC')
+                ->get();
+        $groups = $this->paginate($groups);
+        return response()->json(['groups' => $groups], $this->successStatus);
     }
     public function createGroup(Request $request)
     {
@@ -541,6 +412,12 @@ class chatController extends Controller
 				);
 			}
 			DB::table('groupmember')->insert($adds);
+            $implodemembers = implode(',', $members);
+            DB::table('group')
+            ->where('group_id','=',$group_id)
+            ->update([
+            'memberid' 		=> $implodemembers,
+            ]);
             $groupcreated = Group::where('group_id', $group_id)
             ->select('group_id', 'group_name', 'group_image', 'created_by', 'status_id', 'created_at')->get();
         return response()->json(["success" => true, "group" => $groupcreated, "message" => "Group created successfully"], $this->successStatus);
@@ -549,7 +426,6 @@ class chatController extends Controller
     {
     	$group_id = $request->group_id;
         $group =  $this->getGroup($group_id);
-        // dd($group['group']->group_image);
         if(!empty($request->group_image[0]))
         {
             $image_string = $request->group_image[0];
@@ -565,7 +441,7 @@ class chatController extends Controller
             'status_id' => 1 ? 1 : $group->status,
         );
         $group = Group::where('group_id', $group_id)->update($form_data);
-        $groupattach = Group::where('group_id', $group_id)->first(); //continue from
+        $groupattach = Group::where('group_id', $group_id)->first();
         $groupupdated = Group::where('group_id', $group_id)
             ->select('group_id', 'group_name', 'group_image', 'created_by', 'status_id', 'created_at')->first();
         return response()->json(["success" => true, "groupupdated" => $groupupdated, "message" => "Group Updated Successfully"], $this->successStatus);
@@ -585,8 +461,7 @@ class chatController extends Controller
 			]); 
         return response()->json(["message" => "Group Archived Successfully"], $this->successStatus);
     }
-	// Functions Use In Controller Start
-    public function getGroup($group_id)
+	public function getGroup($group_id)
     {
     	$group_id  = $group_id;
         $group = DB::table('group')
@@ -611,20 +486,12 @@ class chatController extends Controller
     {
     	$user = $request->group_id;
         $adds[] = array(
-            'group_id'      => $request->group_id,
-            'user_id'       => $request->member_id,
-            'status_id'     => 1,
-            'created_at'    => date('Y-m-d h:i:s'),
-            );
+                    'group_id'      => $request->group_id,
+                    'user_id'       => $request->member_id,
+                    'status_id'     => 1,
+                    'created_at'    => date('Y-m-d h:i:s'),
+                );
             DB::table('groupmember')->insert($adds);
-        // Event::dispatch(new AddGroupMember(
-        // $user,
-        // [
-        //     'group' => $user,
-        //     'member' => $request->member_id,
-        //     // 'members' => $members,
-        // ],
-        // ));
          $updatedmembers = DB::table('groupmember')
 		->where('status_id','=',1)
 		->where('group_id','=',$request->group_id)
@@ -636,9 +503,9 @@ class chatController extends Controller
         }
         $implodemembers = implode(',', $arrmembers);
         DB::table('group')
-        ->where('group_id','=',$request->group_id)
-        ->update([
-        'memberid' 		=> $implodemembers,
+            ->where('group_id','=',$request->group_id)
+            ->update([
+            'memberid' 		=> $implodemembers,
         ]);
         return response()->json(["success" => true, "updatedmembers" => $implodemembers, "message" => "Member Added Successfully"], $this->successStatus);
     }
@@ -664,9 +531,8 @@ class chatController extends Controller
         DB::table('group')
         ->where('group_id','=',$request->group_id)
         ->update([
-        'memberid' 		=> $implodemembers,
+            'memberid' 		=> $implodemembers,
         ]);
-        // dd($implodemembers);
         return response()->json(["success" => true, "updatedmembers" => $implodemembers, "message" => "Member Remove Successfully"], $this->successStatus);
     }
     public function groupparticipants(Request $request)
@@ -680,15 +546,15 @@ class chatController extends Controller
         return response()->json(["success" => true, "participants" => $participants, "message" => "Group Participants"], $this->successStatus);
     }
      public function makegroupmessageseen(Request $request){
-     	$seen = DB::connection('mysql')->table('groupmessageseen')
+     	$seen = DB::table('groupmessageseen')
+         ->where('group_id','=',$request->group_id)
+         ->where('user_id','=',$request->user_id)
+         ->where('groupmessageseen_seen','=',1)
         ->where('status_id','=',1)
-        ->where('group_id','=',$request->group_id)
-        ->where('user_id','=',$request->user_id)
-        ->where('groupmessageseen_seen','=',1)
         ->update([
       		 'groupmessageseen_seen' => 2,
         ]);
-     	return Response::json(['status' => $seen], $this->successStatus);
+        return response()->json(['status' => $seen],200);
     }
      public function fetchAttachments(Request $request)
     {
@@ -741,23 +607,17 @@ class chatController extends Controller
     public function getSignupUsers(Request $request)
     {
         $contacts_total = DB::table('elsemployees')->where('elsemployees_status', 3)->select('elsemployees_empid', 'elsemployees_name', 'elsemployees_roleid', 'elsemployees_image')->get();
-        return response()->json([
-            'contacts' => $contacts_total,/*'Your contact list is empty',*/
-        ], $this->successStatus);
+        return response()->json(['contacts' => $contacts_total], $this->successStatus);
     }
     public function getApproveUsers(Request $request)
     {
         $contacts_total = DB::table('elsemployees')->where('elsemployees_status', 2)->select('elsemployees_empid', 'elsemployees_name', 'elsemployees_roleid', 'elsemployees_image')->get();
-        return response()->json([
-            'contacts' => $contacts_total,/*'Your contact list is empty',*/
-        ], $this->successStatus);
+        return response()->json(['contacts' => $contacts_total], $this->successStatus);
     }
     public function getDeclineUsers(Request $request)
     {
         $contacts_total = DB::table('elsemployees')->where('elsemployees_status', 1)->select('elsemployees_empid', 'elsemployees_name', 'elsemployees_roleid', 'elsemployees_image')->get();
-        return response()->json([
-            'contacts' => $contacts_total,/*'Your contact list is empty',*/
-        ], $this->successStatus);
+        return response()->json(['contacts' => $contacts_total], $this->successStatus);
     }
     public function approveDeclineSignupUsers(Request $request)
     {
@@ -890,5 +750,4 @@ class chatController extends Controller
         $items = $items instanceof Collection ? $items : Collection::make($items);
         return  new  LengthAwarePaginator($items->forPage($page, $perPage), $items->count(), $perPage, $page, $options);
     }
-    // Functions Use In Controller End
 }
