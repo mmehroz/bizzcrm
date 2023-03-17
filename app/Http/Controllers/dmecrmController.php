@@ -1831,12 +1831,18 @@ class dmecrmController extends Controller
 		}
 	}
 	public function dmealldeal(Request $request){
-		$getalldata = DB::table('dmeorderdetails')
-		->select('dmeclient_id','dmeclient_token','dmeclient_name','dmeinsurance_formid','dmeclient_cardtype','dmeclient_date','user_name','orderstatus_id','orderstatus_name')
+		// $getalldata = DB::table('dmeorderdetails')
+		// ->select('dmeclient_id','dmeclient_token','dmeclient_name','dmeinsurance_formid','dmeclient_cardtype','dmeclient_date','user_name','orderstatus_id','orderstatus_name')
+		// ->where('status_id','=',1)
+		// ->where('campaign_id','=',$request->campaign_id)
+		// ->orderBy('dmeclient_id','DESC')
+		// ->paginate(30);
+		$getalldata = DB::table('dmelistdata')
+		->select('dmeclient_id','dmeclient_token','dmeclient_name','dmeclient_cardtype','dmeclient_date','orderstatus_id','orderstatus_name')
 		->where('status_id','=',1)
 		->where('campaign_id','=',$request->campaign_id)
 		->orderBy('dmeclient_id','DESC')
-		->get();
+		->paginate(30);
 		return response()->json(['data' => $getalldata,'message' => 'DME All Deals'],200);
 	}
 	public function dmedoctorchasecnpvorderlist(Request $request){
