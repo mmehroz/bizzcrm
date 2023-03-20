@@ -434,55 +434,18 @@ class testchatController extends Controller
     }
     public function testgetUserGroups(Request $request)
     {
-        $usergroups = DB::table('groupmember')->where('user_id', $request->loginuser_id)->where('status_id', 1)->get();
-        $groups = [];
-        $indexmember=0;
+        $usergroups = DB::table('groupmember')->where('user_id', $request->loginuser_id)->where('status_id', 1)->select('group_id')->get();
+        $groupids = array();
         foreach($usergroups as $singlegroup){
-        $groupget = DB::table('group')->where('group.group_id', $singlegroup->group_id)
-        	->where('group.status_id', 1)
-            ->first();
-        $getgroupmember = DB::table('groupmember')->where('group_id', $singlegroup->group_id)->where('status_id', 1)->select('user_id')->get();
-        $gm = array();
-        foreach ($getgroupmember as $getgroupmembers) {
-            $gm[] = $getgroupmembers->user_id;
-
-        }
-        $mergemembers = implode(',', $gm);
-            if($groupget != null){
-            array_push($groups, $groupget);
-            $groups[$indexmember]->memberid = $mergemembers;
-            $indexmember++;
-            }
-        }
-        // dd($groups);
-        // $index=0;
-        // foreach ($groups as $groupss) {
-        //     $groupmessage = DB::table('groupmessage')->where('groupmessage.group_id', $groupss->group_id)
-        //     ->where('status_id', 1)
-        //     ->orderBy('groupmessage.created_at', 'desc')
-        //     ->select('groupmessage.groupmessage_body','groupmessage.groupmessage_attachment','groupmessage.created_at')
-        //     ->first();
-        //     $getunseenmesg = DB::table('groupmessageseen')
-        //     ->select('groupmessageseen_id')
-        //     ->where('group_id','=', $groupss->group_id)
-        //     ->where('user_id','=', $request->user_id)
-        //     ->where('groupmessageseen_seen','=', 1)
-        //     ->count('groupmessageseen_id'); 
-        //     if (isset($groupmessage->groupmessage_body)) {
-        //     $groups[$index]->lastmessage = $groupmessage->groupmessage_body;
-        //     $groups[$index]->attachment = $groupmessage->groupmessage_attachment;
-        //     $groups[$index]->groupmessagetime = $groupmessage->created_at;
-        //     $groups[$index]->groupunseenmesg = $getunseenmesg;
-        //     }else{
-        //     $groups[$index]->lastmessage = "";
-        //     $groups[$index]->attachment = "";
-        //     $groups[$index]->groupmessagetime = "";
-        //     $groups[$index]->groupunseenmesg = "";
-        //     }
-        //     $index++;
-        // }
-        // $groups = $this->paginate($groups);
-        return $groups;
+            $groupids[] = $singlegroup->group_id;
+        }            
+        $sortgroup = DB::table('group')
+                    ->whereIn('group_id',$groupids)
+                    ->where('status_id', 1)
+                    ->orderBy('groupmessagetime','DESC')
+                    ->get();
+        
+        return $sortgroup;
     }
     public function createGroup(Request $request)
     {
